@@ -21,7 +21,7 @@ def train_harmonic_model(
     Trains a model from harmonic
     """
 
-    ndim = train_samples.shape[1]
+    ndim = train_samples.shape[2]
     chains = hm.Chains(ndim)
     chains.add_chains_3d(train_samples, train_lnprob)
 
