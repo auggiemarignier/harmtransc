@@ -1,0 +1,56 @@
+from functools import partial
+from typing import Callable
+import numpy as np
+from numpy.typing import NDArray
+import emcee
+import jax.numpy as jnp
+
+NCHAINS = 200
+NDIM = 5
+SAMPLES_PER_CHAIN = 5000
+NBURN = 2000
+
+
+def ln_mvgaussian_posterior(x, inv_cov):
+    """Compute log_e of posterior of n dimensional multivariate Gaussian.
+
+    Args:
+
+        x: Position at which to evaluate posterior.
+
+    Returns:
+
+        double: Value of posterior at x.
+
+    """
+
+    return -jnp.dot(x, jnp.dot(inv_cov, x)) / 2.0
+
+
+def perform_sampling(
+    ln_posterior: Callable[[NDArray[np.float_]], float]
+) -> tuple[NDArray[np.float_], NDArray[np.float_]]:
+    sampler = emcee.EnsembleSampler(NCHAINS, NDIM, ln_posterior)
+
+    # initialise random seed
+    np.random.seed(1)
+
+    # Set initial random position and state
+    pos = np.random.rand(NDIM * NCHAINS).reshape((NCHAINS, NDIM))
+    rstate = np.random.get_state()
+    (pos, prob, state) = sampler.run_mcmc(pos, SAMPLES_PER_CHAIN, rstate0=rstate)
+
+    samples = np.ascontiguousarray(sampler.chain[:, NBURN:, :])
+    lnprob = np.ascontiguousarray(sampler.lnprobability[:, NBURN:])
+    return samples, lnprob
+
+
+def main():
+    inv_cov = np.eye(NDIM)
+    # Instantiate and execute sampler
+    ln_posterior = partial(ln_mvgaussian_posterior, inv_cov=inv_cov)
+
+    samples, lnprob = perform_sampling(ln_posterior)
+
+    # Save samples and lnprob
+    ...
