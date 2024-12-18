@@ -1,4 +1,5 @@
 from functools import partial
+from pathlib import Path
 from typing import Callable
 import numpy as np
 from numpy.typing import NDArray
@@ -9,6 +10,8 @@ NCHAINS = 200
 NDIM = 5
 SAMPLES_PER_CHAIN = 5000
 NBURN = 2000
+
+OUTDIR = Path(__file__).parent.parent / "data" / "sampling"
 
 
 def ln_mvgaussian_posterior(x, inv_cov):
@@ -53,4 +56,10 @@ def main():
     samples, lnprob = perform_sampling(ln_posterior)
 
     # Save samples and lnprob
-    ...
+    OUTDIR.mkdir(parents=True, exist_ok=True)
+    np.save(OUTDIR / "samples.npy", samples)
+    np.save(OUTDIR / "lnprob.npy", lnprob)
+
+
+if __name__ == "__main__":
+    main()

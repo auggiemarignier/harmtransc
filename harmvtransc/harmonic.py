@@ -1,11 +1,11 @@
+from pathlib import Path
 import harmonic as hm
-from harmonic.model_abstract import Model
 import numpy as np
 from numpy.typing import NDArray
 
 from learning import train_harmonic_model
 
-
+DATADIR = Path(__file__).parent.parent / "data" / "sampling"
 TRAINING_PROPORTION = 0.5
 
 
@@ -53,3 +53,7 @@ def main():
     print(
         f"ln inverse evidence (harmonic) = {ev.ln_evidence_inv} +/- {ev.compute_ln_inv_evidence_errors()}"
     )
+
+
+if __name__ == "__main__":
+    main()
