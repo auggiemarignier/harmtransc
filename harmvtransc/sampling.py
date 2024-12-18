@@ -14,15 +14,16 @@ OUTDIR = Path(__file__).parent.parent / "data" / "sampling"
 
 
 def perform_sampling(
-    ln_posterior: Callable[[NDArray[np.float_]], float]
+    ln_posterior: Callable[[NDArray[np.float_]], float],
+    ndim=NDIM,
 ) -> tuple[NDArray[np.float_], NDArray[np.float_]]:
-    sampler = emcee.EnsembleSampler(NCHAINS, NDIM, ln_posterior)
+    sampler = emcee.EnsembleSampler(NCHAINS, ndim, ln_posterior)
 
     # initialise random seed
     np.random.seed(1)
 
     # Set initial random position and state
-    pos = np.random.rand(NDIM * NCHAINS).reshape((NCHAINS, NDIM))
+    pos = np.random.rand(ndim * NCHAINS).reshape((NCHAINS, ndim))
     rstate = np.random.get_state()
     (pos, prob, state) = sampler.run_mcmc(pos, SAMPLES_PER_CHAIN, rstate0=rstate)
 
