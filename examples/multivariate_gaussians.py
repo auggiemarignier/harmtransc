@@ -42,7 +42,7 @@ def ln_analytic_evidence(ndim, cov):
     """
 
     ln_norm_lik = 0.5 * ndim * np.log(2 * np.pi) + 0.5 * np.log(np.linalg.det(cov))
-    return ln_norm_lik
+    return -ln_norm_lik
 
 
 COVARIANCES = [  # a bunch of nD Gaussians with unit covariance
@@ -55,7 +55,7 @@ COVARIANCES = [  # a bunch of nD Gaussians with unit covariance
 def main():
     for covariance in COVARIANCES:
         ln_posterior = partial(ln_mvgaussian_posterior, inv_cov=covariance)
-        samples, lnprob = perform_sampling(ln_posterior)
+        samples, lnprob = perform_sampling(ln_posterior, ndim=covariance.shape[0])
         training_samples, training_lnprob, inference_samples, inference_lnprob = split_data(
             samples, lnprob
         )
