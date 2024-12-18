@@ -1,0 +1,10 @@
+[project]
+name = "harmonicvtransc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "emcee>=3.1.6",
+    "harmonic>=1.2.3",
+]
