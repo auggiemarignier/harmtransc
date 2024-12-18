@@ -12,7 +12,7 @@ TRAINING_PROPORTION = 0.5
 def compute_harmonic_evidence(
     inference_samples: NDArray[np.float_],
     inference_lnprob: NDArray[np.float_],
-    model: Model,
+    model: hm.model_abstract.Model,
 ) -> hm.Evidence:
     ndim = inference_samples.shape[2]
     chains_infer = hm.Chains(ndim)
@@ -42,7 +42,6 @@ def split_data(
 
 def main():
     # load samples and lnprob
-    ...
 
     training_samples, training_lnprob, inference_samples, inference_lnprob = split_data(
         samples, lnprob, training_proportion=TRAINING_PROPORTION
