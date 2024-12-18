@@ -4,7 +4,6 @@ from typing import Callable
 import numpy as np
 from numpy.typing import NDArray
 import emcee
-import jax.numpy as jnp
 
 NCHAINS = 200
 NDIM = 5
@@ -12,22 +11,6 @@ SAMPLES_PER_CHAIN = 5000
 NBURN = 2000
 
 OUTDIR = Path(__file__).parent.parent / "data" / "sampling"
-
-
-def ln_mvgaussian_posterior(x, inv_cov):
-    """Compute log_e of posterior of n dimensional multivariate Gaussian.
-
-    Args:
-
-        x: Position at which to evaluate posterior.
-
-    Returns:
-
-        double: Value of posterior at x.
-
-    """
-
-    return -jnp.dot(x, jnp.dot(inv_cov, x)) / 2.0
 
 
 def perform_sampling(
@@ -49,7 +32,23 @@ def perform_sampling(
 
 
 def main():
+    def ln_mvgaussian_posterior(x, inv_cov):
+        """Compute log_e of posterior of n dimensional multivariate Gaussian.
+
+        Args:
+
+            x: Position at which to evaluate posterior.
+
+        Returns:
+
+            double: Value of posterior at x.
+
+        """
+
+        return -np.dot(x, np.dot(inv_cov, x)) / 2.0
+
     inv_cov = np.eye(NDIM)
+
     # Instantiate and execute sampler
     ln_posterior = partial(ln_mvgaussian_posterior, inv_cov=inv_cov)
 
