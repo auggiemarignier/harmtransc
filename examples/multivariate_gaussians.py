@@ -42,7 +42,7 @@ def ln_analytic_evidence(ndim, cov):
     """
 
     ln_norm_lik = 0.5 * ndim * np.log(2 * np.pi) + 0.5 * np.log(np.linalg.det(cov))
-    return -ln_norm_lik
+    return ln_norm_lik
 
 
 COVARIANCES = [  # a bunch of nD Gaussians with unit covariance
@@ -61,13 +61,10 @@ def main():
         )
         model = train_harmonic_model(training_samples, training_lnprob)
         ev = compute_harmonic_evidence(inference_samples, inference_lnprob, model)
+        evidence, evidence_std = ev.compute_evidence()
 
-        print(
-            f"ln inverse evidence (harmonic) = {ev.ln_evidence_inv} +/- {ev.compute_ln_inv_evidence_errors()}"
-        )
-        print(
-            f"ln analytic evidence = {ln_analytic_evidence(covariance.shape[0], covariance)}"
-        )
+        print(f"Evidence (harmonic) = {evidence} +/- {evidence_std}")
+        print(f"Evidnce (analytic) = {np.exp(ln_analytic_evidence(covariance.shape[0], covariance))}")
 
 
 if __name__ == "__main__":
