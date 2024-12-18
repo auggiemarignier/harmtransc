@@ -42,6 +42,8 @@ def split_data(
 
 def main():
     # load samples and lnprob
+    samples = np.load(DATADIR / "samples.npy")
+    lnprob = np.load(DATADIR / "lnprob.npy")
 
     training_samples, training_lnprob, inference_samples, inference_lnprob = split_data(
         samples, lnprob, training_proportion=TRAINING_PROPORTION
