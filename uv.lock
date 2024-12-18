@@ -599,7 +599,7 @@ sdist = { url = "https://files.pythonhosted.org/packages/46/6b/55ecbd7fdf22c0a10
 [[package]]
 name = "harmonicvtransc"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "emcee" },
     { name = "harmonic" },
