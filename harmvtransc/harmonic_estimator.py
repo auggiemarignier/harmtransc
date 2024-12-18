@@ -3,7 +3,7 @@ import harmonic as hm
 import numpy as np
 from numpy.typing import NDArray
 
-from learning import train_harmonic_model
+from .learning import train_harmonic_model
 
 DATADIR = Path(__file__).parent.parent / "data" / "sampling"
 TRAINING_PROPORTION = 0.5
