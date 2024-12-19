@@ -1,6 +1,8 @@
 from functools import partial
 import jax.numpy as jnp
 import numpy as np
+from harmonic import Evidence
+from dataclasses import dataclass
 
 from harmvtransc.sampling import perform_sampling
 from harmvtransc.harmonic_estimator import (
@@ -8,6 +10,8 @@ from harmvtransc.harmonic_estimator import (
     train_harmonic_model,
     compute_harmonic_evidence,
 )
+from harmvtransc.transc import State as TransCState
+from harmvtransc.transc import metropolis_hastings, visit_proportions
 
 
 def ln_mvgaussian_posterior(x, inv_cov):
@@ -45,6 +49,12 @@ def ln_analytic_evidence(ndim, cov):
     return ln_norm_lik
 
 
+@dataclass
+class State:
+    harmonic: Evidence
+    transc: TransCState
+
+
 COVARIANCES = [  # a bunch of nD Gaussians with unit covariance
     jnp.eye(5),
     jnp.eye(2),
@@ -53,18 +63,31 @@ COVARIANCES = [  # a bunch of nD Gaussians with unit covariance
 
 
 def main():
+    states = []
+
     for covariance in COVARIANCES:
+        ndim=covariance.shape[0]
         ln_posterior = partial(ln_mvgaussian_posterior, inv_cov=covariance)
-        samples, lnprob = perform_sampling(ln_posterior, ndim=covariance.shape[0])
-        training_samples, training_lnprob, inference_samples, inference_lnprob = split_data(
-            samples, lnprob
+        samples, lnprob = perform_sampling(ln_posterior, ndim=ndim)
+        training_samples, training_lnprob, inference_samples, inference_lnprob = (
+            split_data(samples, lnprob)
         )
         model = train_harmonic_model(training_samples, training_lnprob)
         ev = compute_harmonic_evidence(inference_samples, inference_lnprob, model)
         evidence, evidence_std = ev.compute_evidence()
 
         print(f"Evidence (harmonic) = {evidence} +/- {evidence_std}")
-        print(f"Evidnce (analytic) = {np.exp(ln_analytic_evidence(covariance.shape[0], covariance))}")
+        print(
+            f"Evidnce (analytic) = {np.exp(ln_analytic_evidence(ndim, covariance))}"
+        )
+
+        states.append(
+            State(ev, TransCState(samples.reshape((-1, ndim)), lnprob.reshape(-1), model, 1 / len(COVARIANCES)))
+        )
+    
+    print("TransC time!")
+    k_samples = metropolis_hastings([state.transc for state in states])
+    print(visit_proportions(k_samples))
 
 
 if __name__ == "__main__":
