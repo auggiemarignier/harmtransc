@@ -1,16 +1,7 @@
 import harmonic as hm
 import numpy as np
 from numpy.typing import NDArray
-from typing import Protocol
-
-
-class Model(Protocol):
-
-    def fit(self, X: NDArray[np.float_], Y: NDArray[np.float_]): ...
-
-    def predict(self, x: NDArray[np.float_]) -> NDArray[np.float_]: ...
-
-    def sample(self, n_sample: int) -> NDArray[np.float_]: ...
+from harmonic.model_abstract import Model
 
 
 def train_harmonic_model(
