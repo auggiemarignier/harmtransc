@@ -38,7 +38,7 @@ class State:
         return self.get_sample(idx), self.get_unnormed_lnprob(idx)
 
     def evaluate_psuedo_prior(self, m: NDArray[np.float_]) -> float:
-        return self.psuedo_prior.predict(m)[0]
+        return np.array([self.psuedo_prior.predict(m)])[0]  # manipulate jax array to get float
 
 
 def propose_k(k_max: int) -> int:
@@ -99,3 +99,8 @@ def metropolis_hastings(states: list[State]) -> NDArray[np.int_]:
             lnp = lnpp
 
     return np.array(k_samples)
+
+
+def visit_proportions(k_samples: NDArray[np.int_]) -> NDArray[np.float_]:
+    kmax = np.max(k_samples)
+    return np.array([np.sum(k_samples == k) / len(k_samples) for k in range(kmax + 1)])
