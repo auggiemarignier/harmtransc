@@ -11,8 +11,5 @@ dependencies = [
     "pytransc",
 ]
 
-[tool.uv]
-package = true
-
 [tool.uv.sources]
 pytransc = { git = "ssh://git@github.com/auggiemarignier/pyTransC.git", rev = "np1" }
