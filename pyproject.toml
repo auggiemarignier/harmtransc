@@ -7,7 +7,12 @@ requires-python = ">=3.12"
 dependencies = [
     "emcee>=3.1.6",
     "harmonic>=1.2.3",
+    "pandas>=2.3.1",
+    "pytransc",
 ]
 
 [tool.uv]
 package = true
+
+[tool.uv.sources]
+pytransc = { git = "ssh://git@github.com/auggiemarignier/pyTransC.git", rev = "np1" }

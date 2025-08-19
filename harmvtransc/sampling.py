@@ -25,7 +25,7 @@ def perform_sampling(
     # Set initial random position and state
     pos = np.random.rand(ndim * NCHAINS).reshape((NCHAINS, ndim))
     rstate = np.random.get_state()
-    (pos, prob, state) = sampler.run_mcmc(pos, SAMPLES_PER_CHAIN, rstate0=rstate)
+    (pos, prob, state) = sampler.run_mcmc(pos, SAMPLES_PER_CHAIN, rstate0=rstate, progress=True)
 
     samples = np.ascontiguousarray(sampler.chain[:, NBURN:, :])
     lnprob = np.ascontiguousarray(sampler.lnprobability[:, NBURN:])
