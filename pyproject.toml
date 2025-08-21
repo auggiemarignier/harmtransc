@@ -8,8 +8,16 @@ dependencies = [
     "emcee>=3.1.6",
     "harmonic>=1.2.3",
     "pandas>=2.3.1",
+    "pyfm2d",
     "pytransc",
 ]
 
 [tool.uv.sources]
-pytransc = { git = "ssh://git@github.com/auggiemarignier/pyTransC.git", rev = "np1" }
+pytransc = { git = "ssh://git@github.com/inlab-geo/pyTransC.git"}
+
+[tool.uv]
+# harmonic requires distrax which requires numpy<2
+# but pytransc, pyfm2d require numpy>=2
+# distrax hasn't released anything in over a year
+# so seems unlikely to update
+override-dependencies = ["numpy>=2"]
